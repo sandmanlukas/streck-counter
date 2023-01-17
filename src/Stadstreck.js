@@ -1,5 +1,5 @@
 // import { useState, useEffect } from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuthContext } from "./hooks/useAuthContext";
 import Dropdown from "./Dropdown";
 import { checkResponse } from "./utils";
@@ -17,7 +17,7 @@ export default function Stadstreck(props) {
   const { logout } = useLogout();
 
   // function that fetches next obligatory cleaners from database
-  async function getNextObligatoryCleaners(limit, posNumber) {
+  const getNextObligatoryCleaners = useCallback(async function (limit, posNumber) {
     var firstCleanerPosNumber = -1;
     var secondCleanerPosNumber = -1;
     var body = {}
@@ -66,10 +66,10 @@ export default function Stadstreck(props) {
     }
 
     return firstCleanerPosNumber;
-  }
+  }, [user.token])
 
   // function that fetches the next stadstreck cleaners from database
-  async function getNextStadstreckCleaners() {
+  const getNextStadstreckCleaners = useCallback(async function () {
     const nextStadstreckCleanersResponse = await fetch(
       `/streck/stadstreck/nextStadstreckCleaners`,
       {
@@ -89,10 +89,10 @@ export default function Stadstreck(props) {
     const mostPosNumber = nextStadstreckCleaners[0].nextMost;
 
     return [latestPosNumber, mostPosNumber];
-  }
+  },[logout, user.token])
 
   // helper function that gets the next cleaners
-  async function getNextCleaners() {
+  const getNextCleaners = useCallback(async function () {
     var firstCleanerPosNumber = -1;
     var secondCleanerPosNumber = -1;
 
@@ -115,10 +115,11 @@ export default function Stadstreck(props) {
       secondCleanerPosNumber = nextCleaner;
     }
     setNextCleaners([firstCleanerPosNumber, secondCleanerPosNumber]);
-  }
+  },[getNextStadstreckCleaners, getNextObligatoryCleaners])
 
   // This method fetches the persons from the database.
-  async function getStadstreck() {
+  const getStadstreck = useCallback (async function () {
+    console.log("getStadstreck")
     const response = await fetch(`/streck/fetchAll`, {
       headers: { Authorization: `Bearer ${user.token}` },
     });
@@ -130,18 +131,28 @@ export default function Stadstreck(props) {
 
     const stadstreck = await response.json();
     setStadstreck(stadstreck);
-  }
+  },[logout, user.token])
 
+  const isFetchedRef = useRef(false)
   useEffect(() => {
-    const fetchData = async () => {
-      await getStadstreck();
-      await getNextCleaners();
-      return;
-    };
-    if (user) {
-      fetchData().catch(console.error);
+    if (!isFetchedRef.current) {
+      isFetchedRef.current = true;
+
+      if (user) {
+          getStadstreck()
+          getNextCleaners()
+      }
+
     }
-  }, [stadstreck.length, nextCleaners.length, user]);
+    // const fetchData = async () => {
+    //   await getStadstreck();
+    //   await getNextCleaners();
+    //   return;
+    // };
+    // if (user) {
+    //   fetchData().catch(console.error);
+    // }
+  }, [getNextCleaners, getStadstreck, user]);
 
   // updates database to correct next cleaner
   async function updateNextCleaner() {
@@ -342,7 +353,7 @@ export default function Stadstreck(props) {
       await updateNextCleaner();
       // get next cleaners
       await getNextCleaners();
-      // fetch all
+      // fetch all 
       await getStadstreck();
     }
     return;

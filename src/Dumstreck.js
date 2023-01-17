@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuthContext } from "./hooks/useAuthContext";
 import Dropdown from "./Dropdown";
 import { checkResponse } from "./utils";
@@ -10,7 +10,8 @@ export default function Dumstreck(props) {
   const { logout } = useLogout();
 
   // This method fetches the persons from the database.
-  async function getDumstreck() {
+  const getDumstreck = useCallback(async function () {
+    console.log("calling getDumstreck")
     const response = await fetch(`/streck/fetchAll`, {
       headers: { Authorization: `Bearer ${user.token}` },
     });
@@ -22,18 +23,22 @@ export default function Dumstreck(props) {
 
     const dumstreck = await response.json();
     setDumstreck(dumstreck);
-  }
+  }, [logout, user])
 
+  const isFetchedRef = useRef(false);
   useEffect(() => {
-    const fetchData = async () => {
-      await getDumstreck();
-      return;
-    };
+    // const fetchData = async () => {
+    //   await getDumstreck();
+    //   // return;
+    // };
 
-    if (user) {
-      fetchData().catch(console.error);
+    if (!isFetchedRef.current) {
+      isFetchedRef.current = true;
+      if (user) {
+        getDumstreck().catch(console.error)
+      }
     }
-  }, [dumstreck.length, user]);
+  }, [user, getDumstreck]);
 
   // handles the press of the button `Ge Dumstreck!`
   async function giveDumstreck() {
@@ -136,7 +141,7 @@ export default function Dumstreck(props) {
           </div>
         </div>
       ))}
-  
+
       {user.role === "admin" && (<>
         <Dropdown id="dumstreckDropdown"></Dropdown>
         <button onClick={onClickGive}> Ge Dumstreck!</button>
