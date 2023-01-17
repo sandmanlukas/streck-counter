@@ -1,4 +1,5 @@
 {
+  "proxy": "https://streck.cortegen.onrender.com",
   "name": "streck-counter",
   "version": "0.1.0",
   "private": true,
