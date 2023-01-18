@@ -11,8 +11,7 @@ export default function Dumstreck(props) {
 
   // This method fetches the persons from the database.
   const getDumstreck = useCallback(async function () {
-    console.log("calling getDumstreck")
-    const response = await fetch(`/streck/fetchAll`, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/streck/fetchAll`, {
       headers: { Authorization: `Bearer ${user.token}` },
     });
 
@@ -79,7 +78,7 @@ export default function Dumstreck(props) {
   // updates database with new dumstreck
   async function updateDumstreck(editedPerson) {
     // This will send a post request to update the data in the database.
-    const response = await fetch(`/streck/update/dumstreck`, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/streck/update/dumstreck`, {
       method: "POST",
       body: JSON.stringify(editedPerson),
       headers: {
@@ -88,12 +87,7 @@ export default function Dumstreck(props) {
       },
     });
 
-    if (!response.ok) {
-      console.log(response);
-      const message = `An error has occurred: ${response.statusText}`;
-      window.alert(message);
-      return;
-    }
+    if (!checkResponse(response)) return
 
     // fetch all records
     await getDumstreck();

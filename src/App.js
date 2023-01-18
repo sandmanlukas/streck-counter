@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { useAuthContext } from "./hooks/useAuthContext";
+//
 
 // Pages and Components
 import Home from "./Home";
@@ -17,7 +18,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<Home/>}
+            element={<Home />}
           ></Route>
           <Route
             path="/login"

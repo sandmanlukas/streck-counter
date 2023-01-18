@@ -38,7 +38,7 @@ export default function Stadstreck(props) {
     }
 
     const nextObligatoryCleanerResponse = await fetch(
-      `/streck/stadstreck/nextObligatoryCleaners/`,
+      `${process.env.REACT_APP_BACKEND_URL}/streck/stadstreck/nextObligatoryCleaners/`,
       {
         method: "POST",
         body: JSON.stringify(body),
@@ -71,7 +71,7 @@ export default function Stadstreck(props) {
   // function that fetches the next stadstreck cleaners from database
   const getNextStadstreckCleaners = useCallback(async function () {
     const nextStadstreckCleanersResponse = await fetch(
-      `/streck/stadstreck/nextStadstreckCleaners`,
+      `${process.env.REACT_APP_BACKEND_URL}/streck/stadstreck/nextStadstreckCleaners`,
       {
         headers: { Authorization: `Bearer ${user.token}` },
       }
@@ -89,7 +89,7 @@ export default function Stadstreck(props) {
     const mostPosNumber = nextStadstreckCleaners[0].nextMost;
 
     return [latestPosNumber, mostPosNumber];
-  },[logout, user.token])
+  }, [logout, user.token])
 
   // helper function that gets the next cleaners
   const getNextCleaners = useCallback(async function () {
@@ -115,12 +115,11 @@ export default function Stadstreck(props) {
       secondCleanerPosNumber = nextCleaner;
     }
     setNextCleaners([firstCleanerPosNumber, secondCleanerPosNumber]);
-  },[getNextStadstreckCleaners, getNextObligatoryCleaners])
+  }, [getNextStadstreckCleaners, getNextObligatoryCleaners])
 
   // This method fetches the persons from the database.
-  const getStadstreck = useCallback (async function () {
-    console.log("getStadstreck")
-    const response = await fetch(`/streck/fetchAll`, {
+  const getStadstreck = useCallback(async function () {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/streck/fetchAll`, {
       headers: { Authorization: `Bearer ${user.token}` },
     });
 
@@ -131,7 +130,7 @@ export default function Stadstreck(props) {
 
     const stadstreck = await response.json();
     setStadstreck(stadstreck);
-  },[logout, user.token])
+  }, [logout, user.token])
 
   const isFetchedRef = useRef(false)
   useEffect(() => {
@@ -139,8 +138,8 @@ export default function Stadstreck(props) {
       isFetchedRef.current = true;
 
       if (user) {
-          getStadstreck()
-          getNextCleaners()
+        getStadstreck()
+        getNextCleaners()
       }
 
     }
@@ -160,7 +159,7 @@ export default function Stadstreck(props) {
     var mostPosNumber = -1;
 
     // Check who got the latest stadstreck
-    const latestStadstreckResponse = await fetch(`/streck/stadstreck/latest`, {
+    const latestStadstreckResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/streck/stadstreck/latest`, {
       headers: { Authorization: `Bearer ${user.token}` },
     });
 
@@ -173,7 +172,7 @@ export default function Stadstreck(props) {
       latestPosNumber = latestStadstreck[0].position_number;
 
       const mostStadstreckResponse = await fetch(
-        `/streck/stadstreck/most/${latestPosNumber}`,
+        `${process.env.REACT_APP_BACKEND_URL}/streck/stadstreck/most/${latestPosNumber}`,
         {
           headers: { Authorization: `Bearer ${user.token}` },
         }
@@ -196,7 +195,7 @@ export default function Stadstreck(props) {
     };
 
     const updateNextStadstreckCleanersResponse = await fetch(
-      `/streck/update/stadstreck/updateStadstreckCleaners`,
+      `${process.env.REACT_APP_BACKEND_URL}/streck/update/stadstreck/updateStadstreckCleaners`,
       {
         method: "POST",
         body: JSON.stringify(nextStadstreckCleaners),
@@ -218,7 +217,7 @@ export default function Stadstreck(props) {
         value: -1,
       };
 
-      const response = await fetch(`/streck/update/stadstreck`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/streck/update/stadstreck`, {
         method: "POST",
         body: JSON.stringify(editedPerson),
         headers: {
@@ -270,7 +269,7 @@ export default function Stadstreck(props) {
         update_total: props.count > 0 ? true : false
       };
 
-      response = await fetch(`/streck/update/stadstreck`, {
+      response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/streck/update/stadstreck`, {
         method: "POST",
         body: JSON.stringify(editedPerson),
         headers: {
@@ -307,7 +306,7 @@ export default function Stadstreck(props) {
   // helper function to update obligatory cleaners in database
   async function sendUpdateObligatoryCleanersRequest(firstCleanerPosNumber, secondCleanerPosNumber) {
     const updateCleanerResponse = await fetch(
-      `/streck/stadstreck/updateObligatoryCleaners/${firstCleanerPosNumber}/${secondCleanerPosNumber}`,
+      `${process.env.REACT_APP_BACKEND_URL}/streck/stadstreck/updateObligatoryCleaners/${firstCleanerPosNumber}/${secondCleanerPosNumber}`,
       {
         headers: { Authorization: `Bearer ${user.token}` },
       }

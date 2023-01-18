@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 
+
+
 export const useLogin = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
@@ -11,15 +13,14 @@ export const useLogin = () => {
     setIsLoading(true);
     setError(null);
 
-    // query database for user
-    const loginResponse = await fetch("/user/login", {
+    // query database
+    const loginResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/user/login/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin":"*"  },
       body: JSON.stringify({ username, password }),
     });
 
     const loginJson = await loginResponse.json();
-
     if (!loginResponse.ok) {
       setIsLoading(false);
       setError(loginJson.error);

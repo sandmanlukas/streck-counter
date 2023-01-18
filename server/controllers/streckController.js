@@ -137,7 +137,7 @@ const updateObligatoryCleaners = async (req, res) => {
   console.log("pos1:", pos1)
   console.log("pos2:", pos2)
 
-  
+
   if (pos2 === -1) {
     queryCurrentCleaners = { position_number: pos1 };
     cleanersResponse = await Position.find({ position_number: { $gte: (pos1 + 1 % 11) } }).sort({ position_number: 1 })

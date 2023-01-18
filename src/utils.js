@@ -16,7 +16,7 @@ export async function getRoleFromUser(user) {
   }
   const responseBody = { token: user.token };
 
-  const roleResponse = await fetch(`/user/role`, {
+  const roleResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/user/role`, {
     method: "POST",
     body: JSON.stringify(responseBody),
     headers: {

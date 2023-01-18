@@ -31,7 +31,7 @@ const Dropdown = (props) => {
     // if sent from stadstreck dropdown
     if (props.id === "stadstreckDropdown") {
       // -1 stadstreck can be given
-      const newOptions = [1,2,3,4,5,6,7,8,9,10,-1]
+      const newOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, -1]
       setOptions(newOptions)
       // send stadstreck event
       const streckEvent = new CustomEvent('stadstreckPerson', { detail: { stadstreckPerson: selectedPosition, stadstreckCount: selectedCount } });
