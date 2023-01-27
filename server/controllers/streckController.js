@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 // get all streck
 const getAllStreck = async (req, res) => {
-  const streck = await Position.find({});
+  const streck = await Position.find({}).sort({ position_number: 1 });
   res.status(200).json(streck);
 };
 
@@ -109,14 +109,11 @@ async function getCleaners(cleaners, secondCleaner) {
   //TODO: there MIGHT occur a scenario when newCleaners is only one person. This might need to be handled.
   // Not sure this can happen though.
   newCleaners = await updateNegativeStadstreck(cleaners, newCleaners)
-  console.log("newCleaners", newCleaners)
   if (newCleaners.length === 2) {
     return newCleaners
   } else {
     cleaners = await Position.find({ obligatory_clean: false, position_number: { $lt: secondCleaner } })
-    console.log("cleaners in else ", cleaners)
     newCleaners = await updateNegativeStadstreck(cleaners, newCleaners)
-    console.log("newcleaner != length 2", newCleaners)
     return newCleaners
   }
 }
@@ -134,9 +131,6 @@ const updateObligatoryCleaners = async (req, res) => {
 
   let cleanersResponse = {};
   // checks if there should be one or two obligatory cleaners
-  console.log("pos1:", pos1)
-  console.log("pos2:", pos2)
-
 
   if (pos2 === -1) {
     queryCurrentCleaners = { position_number: pos1 };
@@ -163,7 +157,6 @@ const updateObligatoryCleaners = async (req, res) => {
 
   const cleaners = await getCleaners(cleanersResponse, pos2)
 
-  console.log("cleaners:", cleaners)
   // If two cleaners were returned, return these, else it means that all other had -1 and we should return those who just cleaned
   if (cleaners.length === 2) {
     nextCleanerFirst = cleaners[0]
@@ -190,8 +183,6 @@ const updateObligatoryCleaners = async (req, res) => {
     updateMany: { filter: queryNextCleaners, update: updateCleanTrue },
   };
 
-  console.log(firstUpdate)
-  console.log(secondUpdate)
   const obligatoryCleaners = await Position.bulkWrite([
     firstUpdate,
     secondUpdate,

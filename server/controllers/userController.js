@@ -9,7 +9,6 @@ const createToken = (_id) => {
 const loginUser = async (req, res) => {
   const { username, password } = req.body;
 
-  console.log("inside loginUser")
   try {
     const user = await User.login(username, password);
 
@@ -18,7 +17,6 @@ const loginUser = async (req, res) => {
 
     res.status(200).json({ username, token, role: user.role });
   } catch (error) {
-    console.log("inside");
     res.status(400).json({ error: error.message });
   }
 };

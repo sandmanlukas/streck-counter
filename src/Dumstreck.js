@@ -26,11 +26,6 @@ export default function Dumstreck(props) {
 
   const isFetchedRef = useRef(false);
   useEffect(() => {
-    // const fetchData = async () => {
-    //   await getDumstreck();
-    //   // return;
-    // };
-
     if (!isFetchedRef.current) {
       isFetchedRef.current = true;
       if (user) {

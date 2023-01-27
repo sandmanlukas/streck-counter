@@ -132,26 +132,25 @@ export default function Stadstreck(props) {
     setStadstreck(stadstreck);
   }, [logout, user.token])
 
-  const isFetchedRef = useRef(false)
+  // somewhat hacky solution to solve errors in useEffect, but works.
+  const fetchData = useCallback(async function () {
+    await getStadstreck();
+    await getNextCleaners();
+  }, [getStadstreck, getNextCleaners])
+
+  const isFetchedRef = useRef(false);
   useEffect(() => {
     if (!isFetchedRef.current) {
       isFetchedRef.current = true;
 
       if (user) {
-        getStadstreck()
-        getNextCleaners()
+        // getStadstreck().catch(console.error)
+        // getNextCleaners().catch(console.error)
+        fetchData()
       }
 
     }
-    // const fetchData = async () => {
-    //   await getStadstreck();
-    //   await getNextCleaners();
-    //   return;
-    // };
-    // if (user) {
-    //   fetchData().catch(console.error);
-    // }
-  }, [getNextCleaners, getStadstreck, user]);
+  }, [fetchData, user]);
 
   // updates database to correct next cleaner
   async function updateNextCleaner() {
@@ -260,8 +259,6 @@ export default function Stadstreck(props) {
       await updateObligatoryCleaners(true)
 
     } else {
-
-
       let editedPerson = {
         position_number: props.positionNumber,
         value: props.count,
